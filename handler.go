@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
 func handlerReady(w http.ResponseWriter, req *http.Request) {
@@ -34,6 +36,18 @@ func handlerNewHelmRepo(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	go helmPackDir(getGitPath(name), getHelmPath(name))
+	response(w, 200, "syncing and packing repo")
+}
+
+//name and addr for adding a repo
+func handlerUpdateHelmRepo(w http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+
+	if err := pullRepo(getGitPath(vars["name"])); err != nil {
+		response(w, 400, "Failed to clone repo: "+vars["name"])
+		return
+	}
+	go helmPackDir(getGitPath(vars["name"]), getHelmPath(vars["name"]))
 	response(w, 200, "syncing and packing repo")
 }
 
