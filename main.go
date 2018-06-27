@@ -2,14 +2,19 @@ package main
 
 import (
 	"fmt"
-	"os"
+	"net/http"
+
+	"github.com/urfave/negroni"
 )
 
 func main() {
-	//cloneRepo("https://github.com/bitnami/charts.git", getGitPath("bitnami"))
-	if err := helmAddRepo("bitnami", "https://charts.bitnami.com/bitnami"); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-	helmPackDir(getGitPath("bitnami"), getHelmPath("helm"))
+	mux := http.NewServeMux()
+	mux.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
+		fmt.Fprintf(w, "Welcome to the home page!")
+	})
+
+	n := negroni.Classic() // Includes some default middlewares
+	n.UseHandler(mux)
+
+	http.ListenAndServe(":3000", n)
 }
