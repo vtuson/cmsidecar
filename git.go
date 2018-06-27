@@ -7,21 +7,21 @@ import (
 	"os/exec"
 )
 
-var rootPath string
+var rootGitPath string
 
 func hasGit() error {
 	return exec.Command("git", "--version").Run()
 }
 
-func getPath(name string) string {
-	if rootPath == "" {
+func getGitPath(name string) string {
+	if rootGitPath == "" {
 		return "/tmp/" + name
 	}
-	return rootPath + name
+	return rootGitPath + name
 }
 
 func hasRepo(name string) bool {
-	if _, err := os.Stat(getPath(name)); err == nil {
+	if _, err := os.Stat(getGitPath(name)); err == nil {
 		return false
 	}
 	return true
@@ -32,9 +32,11 @@ func cloneRepo(orig string, dest string) error {
 		fmt.Println(err)
 		return errors.New("Git is not installed")
 	}
+	os.RemoveAll(dest)
 	cmd := exec.Command("git", "clone", orig, dest)
 	cmd.Stderr = os.Stderr
 	cmd.Stdout = os.Stdout
+	fmt.Printf("Cloning %s into %s\n", orig, dest)
 	return cmd.Run()
 }
 
@@ -46,5 +48,6 @@ func pullRepo(path string) error {
 	cmd := exec.Command("git", "pull", path)
 	cmd.Stderr = os.Stderr
 	cmd.Stdout = os.Stdout
+	fmt.Printf("Pulling repo in %s\n", path)
 	return cmd.Run()
 }
