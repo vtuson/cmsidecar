@@ -55,7 +55,8 @@ func handlerUpdateHelmRepo(w http.ResponseWriter, req *http.Request) {
 //name of repo to delete
 //it needs to delete the git repo and the helm folder
 func handlerDeleteRepo(w http.ResponseWriter, req *http.Request) {
-	name := req.FormValue("name")
+	vars := mux.Vars(req)
+	name := vars["name"]
 	if err := os.RemoveAll(getGitPath(name)); err != nil {
 		response(w, 500, "could not delete git repo:"+name)
 		return

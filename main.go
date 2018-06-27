@@ -26,7 +26,7 @@ func main() {
 	r.HandleFunc("/repo/new", handlerNewHelmRepo).Methods("POST")
 	r.HandleFunc("/repo/dependency", handlerAddHelmRepo).Methods("POST")
 	r.HandleFunc("/repo/{name}/update", handlerUpdateHelmRepo).Methods("GET")
-	r.HandleFunc("/repo/{name}", handlerReady).Methods("DELETE")
+	r.HandleFunc("/repo/{name}", handlerDeleteRepo).Methods("DELETE")
 
 	n := negroni.Classic() // Includes some default middlewares
 	n.UseHandler(r)
