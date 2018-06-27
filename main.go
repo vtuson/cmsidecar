@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 	"github.com/urfave/negroni"
@@ -10,10 +11,12 @@ import (
 
 func main() {
 	help := false
+	var port int
 	r := mux.NewRouter()
 	flag.StringVar(&rootGitPath, "git", "/tmp/", "specify path to store git clone repos")
 	flag.StringVar(&rootHelmPath, "helm", "/tmp/", "specify path to store helm packs")
 	flag.BoolVar(&help, "help", false, "print help")
+	flag.IntVar(&port, "p", 80, "serving port")
 	flag.Parse()
 
 	if help {
@@ -31,5 +34,5 @@ func main() {
 	n := negroni.Classic() // Includes some default middlewares
 	n.UseHandler(r)
 
-	http.ListenAndServe(":3000", n)
+	http.ListenAndServe(":"+strconv.Itoa(port), n)
 }
