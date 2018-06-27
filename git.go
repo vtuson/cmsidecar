@@ -45,10 +45,14 @@ func pullRepo(path string) error {
 		fmt.Println(err)
 		return errors.New("Git is not installed")
 	}
-	exec.Command("git", "reset", path, "--hard", "HEAD").Run()
-	cmd := exec.Command("git", "pull", path)
+	fmt.Println("resetting to head")
+	cmd := exec.Command("git", "reset", path, "--hard", "HEAD")
+	cmd.Dir = path
+	cmd.Run()
+	cmd = exec.Command("git", "pull", path)
 	cmd.Stderr = os.Stderr
 	cmd.Stdout = os.Stdout
+	cmd.Dir = path
 	fmt.Printf("Pulling repo in %s\n", path)
 	return cmd.Run()
 }
