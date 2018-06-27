@@ -22,13 +22,16 @@ func hasHelm() error {
 	return exec.Command("helm", "--help").Run()
 }
 func helmPack(path string, dest string) error {
+	//check folder and create if it doesnt exist
+	if _, err := os.Stat(dest); os.IsNotExist(err) {
+		os.MkdirAll(dest, os.ModePerm)
+	}
 	if err := hasHelm(); err != nil {
 		return errors.New("Helm is not installed")
 	}
 
 	//update dependencies
 	cmd := exec.Command("helm", "dependency", "update", path)
-	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	if err := cmd.Run(); err != nil {
 		return err
