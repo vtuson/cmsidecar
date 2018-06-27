@@ -18,5 +18,6 @@ FROM bitnami/minideb:latest
 
 COPY --from=buildenv /gopath/bin/cmsidecar /
 COPY --from=buildenv /linux-amd64/helm /usr/local/bin/helm
-RUN  apt-get update; apt-get install -y git  
+RUN  apt-get update; apt-get install -y git 
+RUN helm init --client-only  
 CMD ["/cmsidecar"]
