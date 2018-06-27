@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/gorilla/mux"
 )
@@ -49,6 +50,22 @@ func handlerUpdateHelmRepo(w http.ResponseWriter, req *http.Request) {
 	}
 	go helmPackDir(getGitPath(vars["name"]), getHelmPath(vars["name"]))
 	response(w, 200, "syncing and packing repo")
+}
+
+//name of repo to delete
+//it needs to delete the git repo and the helm folder
+func handlerDeleteRepo(w http.ResponseWriter, req *http.Request) {
+	name := req.FormValue("name")
+	if err := os.RemoveAll(getGitPath(name)); err != nil {
+		response(w, 500, "could not delete git repo:"+name)
+		return
+	}
+	if err := os.RemoveAll(getHelmPath(name)); err != nil {
+		response(w, 500, "could not delete git repo:"+name)
+		return
+	}
+	response(w, 200, "OK")
+
 }
 
 func response(w http.ResponseWriter, code int, value string) {
